@@ -1,0 +1,25 @@
+# top-most EditorConfig file
+root = true
+
+# Windows-style newlines with a newline ending every 80 characters
+[*]
+end_of_line = crlf
+insert_final_newline = true
+
+# Set default charset
+charset = utf-8
+
+# Remove any whitespace characters at the end of lines
+trim_trailing_whitespace = true
+
+# Default indent style
+indent_style = space
+indent_size = 4
+
+# YAML files
+[*.{yml,yaml}]
+indent_size = 2
+
+# Markdown files
+[*.md]
+trim_trailing_whitespace = false

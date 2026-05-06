@@ -1,0 +1,8 @@
+# Build path
+/target/
+
+# IDE config
+/.idea/
+
+# etc
+/dependency-reduced-pom.xml
