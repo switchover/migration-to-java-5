@@ -1,6 +1,5 @@
 package com.switchover.migration.java5;
 
-import com.switchover.migration.java5.converter.Converter;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -30,6 +29,13 @@ public class Main {
             .desc("Verbose output")
             .get();
 
+        Option threads = Option.builder("p")
+            .longOpt("threads")
+            .argName("Count")
+            .hasArg()
+            .desc("Thread pool size")
+            .get();
+
         Option version = Option.builder("V")
             .longOpt("version")
             .desc("Show version information")
@@ -42,6 +48,7 @@ public class Main {
 
         options.addOption(targetDir);
         options.addOption(verbose);
+        options.addOption(threads);
         options.addOption(version);
         options.addOption(help);
 
@@ -76,12 +83,24 @@ public class Main {
                 throw new RuntimeException(e);
             }
 
-            Converter converter = new Converter(target);
-            converter.process();
+            Settings.Builder settingsBuilder = Settings.builder();
+            if (cmd.hasOption("p")) {
+                try {
+                    settingsBuilder.threadPoolSize(Integer.parseInt(cmd.getOptionValue("p")));
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Thread pool size must be a positive integer", e);
+                }
+            }
+
+            Api api = new Api();
+            api.process(target, settingsBuilder.build());
 
         } catch (ParseException e) {
             System.err.println("Error parsing command line: " + e.getMessage());
             printHelp(options); // Print help if parsing fails
+        } catch (IllegalArgumentException e) {
+            System.err.println(e.getMessage());
+            printHelp(options);
         }
     }
 
